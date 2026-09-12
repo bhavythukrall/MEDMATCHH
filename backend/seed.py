@@ -3,7 +3,7 @@ import os
 import logging
 from sqlalchemy import select
 from database import AsyncSessionLocal
-from models import User, Hospital, Ambulance
+from models import User, Hospital, Ambulance, Doctor
 from auth import hash_password, verify_password
 
 logger = logging.getLogger(__name__)
@@ -129,6 +129,28 @@ async def seed_data():
         res = await db.execute(select(User).where(User.email == hosp_email))
         if not res.scalar_one_or_none():
             db.add(User(email=hosp_email, password_hash=hash_password(hosp_password), name="Dr. R. Sharma", phone="+91-141-2560291", role="hospital", hospital_id=first_hospital_id))
+
+        # ---- Doctors (one roster per hospital specialty) ----
+        res = await db.execute(select(Doctor))
+        if not res.scalars().first():
+            all_hospitals = list((await db.execute(select(Hospital))).scalars().all())
+            name_pool = [
+                "Dr. Anita Verma", "Dr. Vikram Singh", "Dr. Priya Nair", "Dr. Mohan Lal",
+                "Dr. Kavita Joshi", "Dr. Arjun Rathore", "Dr. Neha Agarwal", "Dr. Sanjay Meena",
+                "Dr. Rekha Chauhan", "Dr. Imran Khan", "Dr. Pooja Bishnoi", "Dr. Deepak Saini",
+            ]
+            i = 0
+            for h in all_hospitals:
+                for idx, spec in enumerate(h.specialties or []):
+                    db.add(Doctor(
+                        hospital_id=h.id,
+                        name=name_pool[i % len(name_pool)],
+                        specialty=spec.lower(),
+                        qualification="MBBS, MD",
+                        phone=f"+91-98765{10000 + i}",
+                        on_duty=(idx % 3 != 2),
+                    ))
+                    i += 1
 
         # ---- Ambulances ----
         res = await db.execute(select(Ambulance))

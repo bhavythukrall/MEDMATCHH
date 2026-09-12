@@ -1,0 +1,28 @@
+{
+  "summary": "Backend + frontend testing for Sanjeevani Care iteration (SOS triage, doctors CRUD, hospital availability, doctor-initiated referral state machine, i18n). 18/18 backend pytest cases passed. Frontend flows verified: language toggle + persistence, public SOS triage returns cardiology for chest pain (EN+HI) with on-duty doctor list, hospital dashboard editable fields + save, doctors add/toggle/delete, ASHA & hospital patient detail with AI match + referral. All specified data-testid attributes present.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Hospital availability save", "issue": "No visible toast/status element detected after clicking update-availability-button (backend persists correctly, but toaster container may not be rendered or is transient). Consider adding data-testid=\"availability-toast\" for reliable UI feedback verification.", "affected_selectors": ["update-availability-button"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_sanjeevani_backend.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Optional: expose a stable data-testid on the success toast for hospital availability & doctor CRUD confirmations to enable strict UI assertions."
+  ],
+  "critical_code_review_comments": [
+    "ai_matching.rank_hospitals: haversine_km short-circuits to 999km if any coord is 0.0 (patient_lat=0). This means public SOS calls without location get 999km distance and low dist_score across the board, which is fine here since it is uniform, but should skip distance entirely rather than injecting 999.",
+    "referrals.list_referrals for hospital role uses OR on hospital_id/asha_user_id — good; but there is no index hint / typing on user.hospital_id being None handled only for asha implicitly.",
+    "sos.py doctor-info counts on_duty_specialists via specialty==specialty, but when specialty=='general' every doctor gets counted as on_duty_specialists 0 (total_specialists 0), so doctor_score falls back to 0 for the branch. Consider treating 'general' as any on-duty doctor.",
+    "hospitals.py PATCH availability accepts total_beds/total_icu without asserting available <= total after update, allowing inconsistent state."
+  ],
+  "updated_files": ["/app/backend/tests/test_sanjeevani_backend.py"],
+  "success_rate": {"backend": "100% (18/18)", "frontend": "100% of tested flows"},
+  "test_credentials": "asha@sanjeevani.in/Asha@2026, hospital@sanjeevani.in/Hosp@2026, bhavythukrall@gmail.com/Sanjeevani@2026 (all working)",
+  "seed_data_creation": "Tests create TEST_-prefixed patients/doctors and clean up doctors after use. Test patients remain in DB (no delete endpoint exercised).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend uses httpOnly cookies; use requests.Session and login via /api/auth/login. Base URL from REACT_APP_BACKEND_URL. Admin credentials in /app/memory/test_credentials.md. Seeded ~21 doctors across hospitals; District Hospital Jaipur is linked to hospital@sanjeevani.in. i18n uses localStorage key set by LanguageProvider — persists across reload. Data-testids all present as documented."
+}

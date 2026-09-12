@@ -12,7 +12,7 @@ router = APIRouter(prefix="/patients", tags=["patients"])
 
 
 @router.post("", response_model=PatientOut)
-async def create_patient(body: PatientIn, db: AsyncSession = Depends(get_db), user: User = Depends(require_roles("asha", "patient", "admin"))):
+async def create_patient(body: PatientIn, db: AsyncSession = Depends(get_db), user: User = Depends(require_roles("asha", "patient", "hospital", "admin"))):
     p = Patient(**body.model_dump(), created_by_user_id=user.id)
     db.add(p)
     await db.commit()

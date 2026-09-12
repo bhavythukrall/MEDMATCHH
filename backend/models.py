@@ -72,6 +72,18 @@ class Hospital(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
 
+class Doctor(Base):
+    __tablename__ = "doctors"
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
+    hospital_id: Mapped[str] = mapped_column(String, ForeignKey("hospitals.id"), index=True)
+    name: Mapped[str] = mapped_column(String)
+    specialty: Mapped[str] = mapped_column(String, index=True)
+    qualification: Mapped[str] = mapped_column(String, default="")
+    phone: Mapped[str] = mapped_column(String, default="")
+    on_duty: Mapped[bool] = mapped_column(default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
 class Patient(Base):
     __tablename__ = "patients"
     id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)

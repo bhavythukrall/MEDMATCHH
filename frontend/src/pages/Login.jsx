@@ -4,6 +4,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { useAuth } from "../lib/auth";
+import { useT } from "../lib/i18n";
 import { formatApiErrorDetail } from "../lib/api";
 import { toast } from "sonner";
 import Nav from "../components/Nav";
@@ -13,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t } = useT();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,9 +22,8 @@ export default function Login() {
     setLoading(true);
     try {
       const u = await login(email, password);
-      toast.success(`Welcome back, ${u.name}`);
+      toast.success(`${t("login.welcome")}, ${u.name}`);
       if (u.role === "hospital") navigate("/hospital");
-      else if (u.role === "asha") navigate("/asha/patients");
       else navigate("/asha/patients");
     } catch (err) {
       toast.error(formatApiErrorDetail(err.response?.data?.detail) || err.message);
@@ -36,29 +37,29 @@ export default function Login() {
   return (
     <div className="min-h-screen grain-bg">
       <Nav />
-      <div className="max-w-md mx-auto px-6 py-16">
-        <h1 className="font-display font-extrabold text-4xl text-[color:var(--forest)]">Login</h1>
-        <p className="text-slate-600 mt-2">Access your Sanjeevani dashboard.</p>
-        <form onSubmit={handleSubmit} className="mt-8 card-tactical p-6 space-y-4" data-testid="login-form">
+      <div className="max-w-md mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <h1 className="font-display font-extrabold text-4xl sm:text-5xl text-[color:var(--forest)]">{t("login.title")}</h1>
+        <p className="text-base md:text-lg text-slate-700 mt-2">{t("login.sub")}</p>
+        <form onSubmit={handleSubmit} className="mt-8 card-tactical p-6 space-y-5" data-testid="login-form">
           <div>
-            <Label>Email</Label>
-            <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required data-testid="login-email-input" />
+            <Label className="text-base">{t("login.email")}</Label>
+            <Input className="h-12 text-lg mt-1" value={email} onChange={(e) => setEmail(e.target.value)} type="email" required data-testid="login-email-input" />
           </div>
           <div>
-            <Label>Password</Label>
-            <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required data-testid="login-password-input" />
+            <Label className="text-base">{t("login.password")}</Label>
+            <Input className="h-12 text-lg mt-1" value={password} onChange={(e) => setPassword(e.target.value)} type="password" required data-testid="login-password-input" />
           </div>
-          <Button type="submit" disabled={loading} className="w-full bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]" data-testid="login-submit-button">
-            {loading ? "Signing in..." : "Sign in"}
+          <Button type="submit" size="lg" disabled={loading} className="w-full h-14 text-lg bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]" data-testid="login-submit-button">
+            {loading ? t("login.loading") : t("login.submit")}
           </Button>
-          <p className="text-sm text-slate-500 text-center">
-            New here? <Link to="/register" className="text-[color:var(--sage)] font-semibold" data-testid="login-register-link">Create an account</Link>
+          <p className="text-base text-slate-600 text-center">
+            {t("login.newHere")} <Link to="/register" className="text-[color:var(--sage)] font-bold" data-testid="login-register-link">{t("login.createAccount")}</Link>
           </p>
         </form>
-        <div className="mt-6 card-tactical p-4 text-xs text-slate-600 space-y-2">
-          <div className="font-semibold uppercase tracking-widest text-slate-500">Demo accounts</div>
-          <button type="button" className="block underline hover:text-[color:var(--sage)]" onClick={() => fill("asha@sanjeevani.in", "Asha@2026")} data-testid="fill-asha-demo">Use ASHA worker (asha@sanjeevani.in / Asha@2026)</button>
-          <button type="button" className="block underline hover:text-[color:var(--sage)]" onClick={() => fill("hospital@sanjeevani.in", "Hosp@2026")} data-testid="fill-hospital-demo">Use Hospital admin (hospital@sanjeevani.in / Hosp@2026)</button>
+        <div className="mt-6 card-tactical p-4 text-sm text-slate-700 space-y-2">
+          <div className="font-bold uppercase tracking-widest text-slate-500">{t("login.demo")}</div>
+          <button type="button" className="block underline font-semibold hover:text-[color:var(--sage)]" onClick={() => fill("asha@sanjeevani.in", "Asha@2026")} data-testid="fill-asha-demo">{t("login.demoAsha")} (asha@sanjeevani.in)</button>
+          <button type="button" className="block underline font-semibold hover:text-[color:var(--sage)]" onClick={() => fill("hospital@sanjeevani.in", "Hosp@2026")} data-testid="fill-hospital-demo">{t("login.demoHospital")} (hospital@sanjeevani.in)</button>
         </div>
       </div>
     </div>

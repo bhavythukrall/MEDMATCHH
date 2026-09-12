@@ -24,7 +24,7 @@ ALLOWED_TRANSITIONS = {
 
 
 @router.post("", response_model=ReferralOut)
-async def create_referral(body: ReferralIn, db: AsyncSession = Depends(get_db), user: User = Depends(require_roles("asha", "admin"))):
+async def create_referral(body: ReferralIn, db: AsyncSession = Depends(get_db), user: User = Depends(require_roles("asha", "hospital", "admin"))):
     res = await db.execute(select(Patient).where(Patient.id == body.patient_id))
     if not res.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -47,7 +47,8 @@ async def list_referrals(db: AsyncSession = Depends(get_db), user: User = Depend
     elif user.role == "hospital":
         if not user.hospital_id:
             return []
-        q = q.where(Referral.hospital_id == user.hospital_id)
+        # incoming referrals + outgoing transfers created by this staff member
+        q = q.where(or_(Referral.hospital_id == user.hospital_id, Referral.asha_user_id == user.id))
     res = await db.execute(q)
     return list(res.scalars().all())
 
@@ -93,8 +94,9 @@ async def update_status(referral_id: str, body: ReferralStatusUpdate, db: AsyncS
             if user.role != "admin":
                 raise HTTPException(status_code=403, detail="Only assigned hospital can perform this action")
     elif transition in asha_actions:
-        if user.role not in ("asha", "admin") or (user.role == "asha" and r.asha_user_id != user.id):
-            raise HTTPException(status_code=403, detail="Only the referring ASHA worker can perform this action")
+        # only the creator of the referral (ASHA worker or referring hospital doctor) or admin
+        if user.role != "admin" and r.asha_user_id != user.id:
+            raise HTTPException(status_code=403, detail="Only the referring ASHA worker or doctor can perform this action")
 
     r.status = body.status
     r.updated_at = datetime.now(timezone.utc)

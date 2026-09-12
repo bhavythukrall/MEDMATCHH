@@ -16,22 +16,52 @@ SPECIALTIES = [
 
 # Rule-based keyword → specialty map (covers ~80% of common rural cases)
 KEYWORD_RULES: dict[str, list[str]] = {
-    "cardiology": ["chest pain", "heart attack", "cardiac", "palpitation", "hypertension", "bp high"],
-    "orthopedics": ["fracture", "broken bone", "sprain", "dislocation", "back pain", "joint"],
-    "neurology": ["stroke", "seizure", "epilepsy", "paralysis", "unconscious", "headache severe", "convulsion"],
-    "obstetrics": ["pregnancy", "labor", "delivery", "prenatal", "postpartum", "miscarriage", "obstetric"],
-    "pediatrics": ["child", "infant", "newborn", "baby", "toddler"],
-    "trauma": ["accident", "road accident", "trauma", "bleeding heavy", "head injury", "fall"],
-    "burns": ["burn", "scald", "fire injury"],
-    "poisoning": ["poison", "snakebite", "snake bite", "pesticide", "overdose", "insect bite"],
-    "pulmonology": ["asthma", "breathless", "shortness of breath", "cough persistent", "tuberculosis", "tb", "pneumonia"],
-    "gastroenterology": ["stomach pain", "vomiting", "diarrhea", "diarrhoea", "abdomen", "jaundice"],
-    "obstetrics_high_risk": ["eclampsia", "bleeding pregnancy"],
-    "general_surgery": ["appendicitis", "hernia", "wound", "cut deep"],
-    "dermatology": ["rash", "skin infection"],
-    "ent": ["ear pain", "throat", "nose bleed"],
-    "ophthalmology": ["eye injury", "vision loss"],
-    "psychiatry": ["suicide", "self harm", "depression severe"],
+    "cardiology": [
+        "chest pain", "heart attack", "cardiac", "palpitation", "hypertension", "bp high", "heart",
+        "सीने में दर्द", "छाती में दर्द", "सीना", "दिल का दौरा", "दिल", "हार्ट अटैक", "धड़कन",
+    ],
+    "obstetrics": [
+        "pregnancy", "labor", "labour", "delivery", "prenatal", "postpartum", "miscarriage", "obstetric",
+        "eclampsia", "bleeding pregnancy",
+        "गर्भपात", "गर्भावस्था", "गर्भ", "प्रसव", "डिलीवरी", "पेट में बच्चा", "गर्भवती",
+    ],
+    "neurology": [
+        "stroke", "seizure", "epilepsy", "paralysis", "unconscious", "headache severe", "convulsion",
+        "migraine", "migrane", "headache", "fits", "numbness",
+        "माइग्रेन", "सिरदर्द", "सिर दर्द", "लकवा", "मिर्गी", "दौरा", "बेहोश", "झटके",
+    ],
+    "dermatology": [
+        "skin problem", "skin problems", "skin infection", "skin", "rash", "itching", "eczema", "acne", "boils",
+        "त्वचा", "चर्म", "खुजली", "दाने", "फोड़े", "चकत्ते",
+    ],
+    "orthopedics": [
+        "fracture", "broken bone", "sprain", "dislocation", "back pain", "joint", "bone",
+        "हड्डी टूट", "हड्डी", "फ्रैक्चर", "मोच", "जोड़ों में दर्द", "कमर दर्द",
+    ],
+    "pediatrics": ["child", "infant", "newborn", "baby", "toddler", "बच्चा", "बच्चे", "शिशु", "नवजात"],
+    "trauma": [
+        "accident", "road accident", "trauma", "bleeding heavy", "head injury", "fall",
+        "दुर्घटना", "एक्सीडेंट", "चोट", "खून बह", "सिर में चोट", "गिर गया",
+    ],
+    "burns": ["burn", "scald", "fire injury", "जल गया", "जल गई", "आग से", "झुलस"],
+    "poisoning": [
+        "poison", "snakebite", "snake bite", "pesticide", "overdose", "insect bite",
+        "जहर", "विष", "सांप ने काटा", "सांप", "कीटनाशक", "जहरीला",
+    ],
+    "pulmonology": [
+        "asthma", "breathless", "shortness of breath", "cough persistent", "tuberculosis", "tb", "pneumonia",
+        "सांस", "दम", "दमा", "खांसी", "टीबी", "निमोनिया",
+    ],
+    "gastroenterology": [
+        "stomach pain", "vomiting", "diarrhea", "diarrhoea", "abdomen", "jaundice", "loose motion",
+        "पेट दर्द", "पेट में दर्द", "उल्टी", "दस्त", "पीलिया",
+    ],
+    "general_surgery": ["appendicitis", "hernia", "wound", "cut deep", "अपेंडिक्स", "हर्निया", "घाव"],
+    "ent": ["ear pain", "throat", "nose bleed", "कान", "गला", "नाक से खून"],
+    "ophthalmology": ["eye injury", "vision loss", "eye", "आंख", "आँख", "दिखाई नहीं"],
+    "psychiatry": ["suicide", "self harm", "depression severe", "आत्महत्या", "अवसाद", "डिप्रेशन"],
+    "nephrology": ["kidney", "dialysis", "गुर्दा", "किडनी"],
+    "urology": ["urine", "urinary", "पेशाब"],
 }
 
 
@@ -89,7 +119,7 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
-def rank_hospitals(hospitals: list, required_specialty: str, patient_lat: float, patient_lon: float, severity: str) -> list[dict]:
+def rank_hospitals(hospitals: list, required_specialty: str, patient_lat: float, patient_lon: float, severity: str, doctor_info: dict | None = None) -> list[dict]:
     """Return list of {hospital, match_score, distance_km, specialty_match, reason}."""
     results = []
     needs_icu = severity == "critical"
@@ -99,8 +129,17 @@ def rank_hospitals(hospitals: list, required_specialty: str, patient_lat: float,
 
         distance = haversine_km(patient_lat, patient_lon, h.latitude, h.longitude)
 
-        # Scoring: specialty 40%, bed availability 25%, ICU (if critical) 15%, distance 20%
-        specialty_score = 40 if specialty_match else 10
+        # Scoring: specialty 30, on-duty doctor 15, beds 25, ICU 15, distance 20, emergency 5
+        specialty_score = 30 if specialty_match else 5
+        info = (doctor_info or {}).get(h.id, {})
+        on_duty_specialists = info.get("on_duty_specialists", 0)
+        total_specialists = info.get("total_specialists", 0)
+        if on_duty_specialists:
+            doctor_score = 15
+        elif total_specialists:
+            doctor_score = 6
+        else:
+            doctor_score = 0 if doctor_info else 10  # neutral when doctor roster not supplied
         bed_score = min(25, (h.available_beds / max(h.total_beds, 1)) * 25) if h.total_beds else 5
         icu_score = 0
         if needs_icu:
@@ -111,12 +150,14 @@ def rank_hospitals(hospitals: list, required_specialty: str, patient_lat: float,
         dist_score = max(0, 20 - min(distance, 100) * 0.2)
         emergency_bonus = 5 if h.emergency_available else 0
 
-        total = specialty_score + bed_score + icu_score + dist_score + emergency_bonus
+        total = specialty_score + doctor_score + bed_score + icu_score + dist_score + emergency_bonus
         reason_parts = []
         if specialty_match:
             reason_parts.append(f"Matches {required_specialty}")
         else:
             reason_parts.append("General care only")
+        if doctor_info:
+            reason_parts.append(f"{on_duty_specialists} specialist(s) on duty")
         reason_parts.append(f"{h.available_beds}/{h.total_beds} beds")
         if needs_icu:
             reason_parts.append(f"{h.available_icu}/{h.total_icu} ICU")

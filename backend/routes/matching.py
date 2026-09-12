@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from database import get_db
-from models import User, Patient, Hospital
+from models import User, Patient, Hospital, Doctor
 from schemas import MatchRequest, MatchResponse, HospitalMatch, HospitalOut
 from auth import get_current_user
 from ai_matching import rule_based_specialty, llm_specialty_match, rank_hospitals
@@ -32,7 +32,15 @@ async def match_patient_to_hospitals(body: MatchRequest, db: AsyncSession = Depe
     # Step 3: rank hospitals
     res = await db.execute(select(Hospital))
     hospitals = list(res.scalars().all())
-    ranked = rank_hospitals(hospitals, specialty, p.latitude, p.longitude, p.severity)
+    doctors = list((await db.execute(select(Doctor))).scalars().all())
+    doctor_info = {
+        h.id: {
+            "on_duty_specialists": len([d for d in doctors if d.hospital_id == h.id and d.specialty == specialty and d.on_duty]),
+            "total_specialists": len([d for d in doctors if d.hospital_id == h.id and d.specialty == specialty]),
+        }
+        for h in hospitals
+    }
+    ranked = rank_hospitals(hospitals, specialty, p.latitude, p.longitude, p.severity, doctor_info)
 
     matches = [
         HospitalMatch(

@@ -45,6 +45,8 @@ async def update_availability(hospital_id: str, body: HospitalAvailabilityUpdate
         raise HTTPException(status_code=403, detail="Cannot update other hospitals")
     for field, val in body.model_dump(exclude_none=True).items():
         setattr(h, field, val)
+    h.available_beds = max(0, min(h.available_beds, h.total_beds))
+    h.available_icu = max(0, min(h.available_icu, h.total_icu))
     await db.commit()
     await db.refresh(h)
     return h

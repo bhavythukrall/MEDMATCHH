@@ -52,8 +52,11 @@ class HospitalIn(BaseModel):
 class HospitalAvailabilityUpdate(BaseModel):
     available_beds: Optional[int] = None
     available_icu: Optional[int] = None
+    total_beds: Optional[int] = None
+    total_icu: Optional[int] = None
     emergency_available: Optional[bool] = None
     specialties: Optional[list[str]] = None
+    phone: Optional[str] = None
 
 
 class HospitalOut(OrmModel):
@@ -104,6 +107,61 @@ class PatientOut(OrmModel):
     injury_details: str
     severity: str
     created_at: datetime
+
+
+# ---------- Doctors ----------
+class DoctorIn(BaseModel):
+    name: str
+    specialty: str
+    qualification: str = ""
+    phone: str = ""
+    on_duty: bool = True
+    hospital_id: Optional[str] = None
+
+
+class DoctorUpdate(BaseModel):
+    name: Optional[str] = None
+    specialty: Optional[str] = None
+    qualification: Optional[str] = None
+    phone: Optional[str] = None
+    on_duty: Optional[bool] = None
+
+
+class DoctorOut(OrmModel):
+    id: str
+    hospital_id: str
+    name: str
+    specialty: str
+    qualification: str
+    phone: str
+    on_duty: bool
+
+
+# ---------- SOS ----------
+class SosIn(BaseModel):
+    problem: str
+    latitude: float = 0.0
+    longitude: float = 0.0
+    severity: str = "critical"
+    max_results: int = 5
+
+
+class SosMatch(BaseModel):
+    hospital: HospitalOut
+    match_score: float
+    distance_km: float
+    specialty_match: bool
+    reason: str
+    on_duty_doctors: list[DoctorOut] = []
+    on_duty_count: int = 0
+
+
+class SosResponse(BaseModel):
+    required_specialty: str
+    llm_used: bool
+    reasoning: str
+    matched_keyword: str = ""
+    matches: list[SosMatch]
 
 
 # ---------- Matching ----------

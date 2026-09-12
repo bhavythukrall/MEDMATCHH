@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { useAuth } from "../lib/auth";
+import { useT } from "../lib/i18n";
 import { api, formatApiErrorDetail } from "../lib/api";
 import { toast } from "sonner";
 import Nav from "../components/Nav";
@@ -14,6 +15,7 @@ export default function Register() {
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
+  const { t } = useT();
   const navigate = useNavigate();
 
   useEffect(() => { api.get("/hospitals").then((r) => setHospitals(r.data)).catch(() => {}); }, []);
@@ -27,7 +29,7 @@ export default function Register() {
       const payload = { ...form };
       if (form.role !== "hospital") delete payload.hospital_id;
       const u = await register(payload);
-      toast.success(`Welcome, ${u.name}`);
+      toast.success(`${t("login.welcome")}, ${u.name}`);
       if (u.role === "hospital") navigate("/hospital");
       else navigate("/asha/patients");
     } catch (err) {
@@ -38,41 +40,41 @@ export default function Register() {
   return (
     <div className="min-h-screen grain-bg">
       <Nav />
-      <div className="max-w-md mx-auto px-6 py-16">
-        <h1 className="font-display font-extrabold text-4xl text-[color:var(--forest)]">Create account</h1>
-        <p className="text-slate-600 mt-2">Choose your role to get started.</p>
-        <form onSubmit={handleSubmit} className="mt-8 card-tactical p-6 space-y-4" data-testid="register-form">
+      <div className="max-w-md mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <h1 className="font-display font-extrabold text-4xl sm:text-5xl text-[color:var(--forest)]">{t("register.title")}</h1>
+        <p className="text-base md:text-lg text-slate-700 mt-2">{t("register.sub")}</p>
+        <form onSubmit={handleSubmit} className="mt-8 card-tactical p-6 space-y-5" data-testid="register-form">
           <div>
-            <Label>I am a</Label>
+            <Label className="text-base">{t("register.iam")}</Label>
             <Select value={form.role} onValueChange={(v) => setField("role", v)}>
-              <SelectTrigger data-testid="register-role-select"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-12 text-lg mt-1" data-testid="register-role-select"><SelectValue /></SelectTrigger>
               <SelectContent className="bg-white">
-                <SelectItem value="asha" data-testid="role-option-asha">ASHA Worker</SelectItem>
-                <SelectItem value="patient" data-testid="role-option-patient">Patient / Family</SelectItem>
-                <SelectItem value="hospital" data-testid="role-option-hospital">Hospital Admin</SelectItem>
+                <SelectItem value="asha" className="text-base" data-testid="role-option-asha">{t("register.asha")}</SelectItem>
+                <SelectItem value="patient" className="text-base" data-testid="role-option-patient">{t("register.patient")}</SelectItem>
+                <SelectItem value="hospital" className="text-base" data-testid="role-option-hospital">{t("register.hospital")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {form.role === "hospital" && (
             <div>
-              <Label>Hospital</Label>
+              <Label className="text-base">{t("register.hospital_label")}</Label>
               <Select value={form.hospital_id} onValueChange={(v) => setField("hospital_id", v)}>
-                <SelectTrigger data-testid="register-hospital-select"><SelectValue placeholder="Select hospital" /></SelectTrigger>
+                <SelectTrigger className="h-12 text-lg mt-1" data-testid="register-hospital-select"><SelectValue placeholder={t("register.selectHospital")} /></SelectTrigger>
                 <SelectContent className="bg-white">
-                  {hospitals.map((h) => <SelectItem key={h.id} value={h.id}>{h.name}</SelectItem>)}
+                  {hospitals.map((h) => <SelectItem key={h.id} value={h.id} className="text-base">{h.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
           )}
-          <div><Label>Full name</Label><Input value={form.name} onChange={(e) => setField("name", e.target.value)} required data-testid="register-name-input" /></div>
-          <div><Label>Phone</Label><Input value={form.phone} onChange={(e) => setField("phone", e.target.value)} data-testid="register-phone-input" /></div>
-          <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} required data-testid="register-email-input" /></div>
-          <div><Label>Password</Label><Input type="password" value={form.password} onChange={(e) => setField("password", e.target.value)} required data-testid="register-password-input" /></div>
-          <Button disabled={loading} type="submit" className="w-full bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]" data-testid="register-submit-button">
-            {loading ? "Creating..." : "Create account"}
+          <div><Label className="text-base">{t("register.name")}</Label><Input className="h-12 text-lg mt-1" value={form.name} onChange={(e) => setField("name", e.target.value)} required data-testid="register-name-input" /></div>
+          <div><Label className="text-base">{t("register.phone")}</Label><Input className="h-12 text-lg mt-1" value={form.phone} onChange={(e) => setField("phone", e.target.value)} data-testid="register-phone-input" /></div>
+          <div><Label className="text-base">{t("register.email")}</Label><Input className="h-12 text-lg mt-1" type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} required data-testid="register-email-input" /></div>
+          <div><Label className="text-base">{t("register.password")}</Label><Input className="h-12 text-lg mt-1" type="password" value={form.password} onChange={(e) => setField("password", e.target.value)} required data-testid="register-password-input" /></div>
+          <Button disabled={loading} size="lg" type="submit" className="w-full h-14 text-lg bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]" data-testid="register-submit-button">
+            {loading ? t("register.loading") : t("register.submit")}
           </Button>
-          <p className="text-sm text-slate-500 text-center">
-            Have an account? <Link to="/login" className="text-[color:var(--sage)] font-semibold">Sign in</Link>
+          <p className="text-base text-slate-600 text-center">
+            {t("register.have")} <Link to="/login" className="text-[color:var(--sage)] font-bold">{t("register.signin")}</Link>
           </p>
         </form>
       </div>
