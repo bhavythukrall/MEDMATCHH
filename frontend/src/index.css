@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #faf9f6;
+  --card: #ffffff;
+  --sage: #107052;
+  --sage-hover: #0b523c;
+  --forest: #0f2922;
+  --terracotta: #d94e34;
+  --amber: #d97706;
+  --blue: #0284c7;
+  --slate-900: #0f172a;
+  --slate-700: #334155;
+  --slate-500: #64748b;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --border: rgba(15, 41, 34, 0.12);
+}
+
+html, body { background: var(--bg); color: var(--slate-900); font-family: "IBM Plex Sans", system-ui, sans-serif; }
+h1, h2, h3, h4, .font-display { font-family: "Cabinet Grotesk", "IBM Plex Sans", sans-serif; letter-spacing: -0.02em; }
+.font-mono { font-family: "JetBrains Mono", monospace; }
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 165 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 165 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 165 47% 11%;
+    --primary: 161 74% 25%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 165 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 161 45% 92%;
+    --accent-foreground: 165 47% 11%;
+    --destructive: 10 68% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 165 20% 88%;
+    --input: 165 20% 88%;
+    --ring: 161 74% 25%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
+
+.grain-bg {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(16, 112, 82, 0.06), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(217, 78, 52, 0.05), transparent 45%),
+    radial-gradient(circle at 60% 90%, rgba(2, 132, 199, 0.05), transparent 50%);
+}
+.hero-noise::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' /></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/></svg>");
+  opacity: 0.12; pointer-events: none;
+}
+
+.pill { border-radius: 9999px; padding: 0.5rem 1rem; }
+.card-tactical { background: #fff; border: 1px solid var(--border); border-radius: 1rem; }

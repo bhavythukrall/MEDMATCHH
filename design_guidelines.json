@@ -1,0 +1,156 @@
+{
+  "project_name": "Sanjeevani Care - Rural Healthcare AI Referral Platform",
+  "app_type": "hybrid_fullstack",
+  "design_philosophy": {
+    "persona": "E1 - The Anti-AI Designer",
+    "theme": "Earthy Healthcare & High-Contrast Tactical Precision",
+    "core_principles": [
+      "Fusion over Imitation: Combine botanical warmth (healing sage, earthy sand) with high-density emergency tactical status dashboards",
+      "Emotion First: Evoke trust, immediate clarity, and calmness during medical distress",
+      "Content is King: Highlight referral lifecycles (Pending → Accepted → In Transit → Arrived → Completed) with clear live status indicators",
+      "High Density & Zero Friction: Direct actions for ASHA workers, Hospitals, and Patients without overwhelming menus",
+      "Tactical High Visibility: Contrast-driven typography with strict APCA contrast compliance for low-light rural smartphone screens"
+    ]
+  },
+  "color_palette": {
+    "archetype": "ORGANIC & EARTHY + TACTICAL PERFORMANCE",
+    "background": {
+      "light": "#FAF9F6",
+      "dark": "#0B1713",
+      "card_light": "#FFFFFF",
+      "card_dark": "#12241E"
+    },
+    "primary_brand": {
+      "sage_green": "#107052",
+      "sage_green_hover": "#0B523C",
+      "deep_forest": "#0F2922",
+      "terracotta_alert": "#D94E34",
+      "terracotta_hover": "#B83B23",
+      "tactical_amber": "#D97706",
+      "pulse_blue": "#0284C7"
+    },
+    "neutrals": {
+      "slate_900": "#0F172A",
+      "slate_700": "#334155",
+      "slate_500": "#64748B",
+      "slate_200": "#E2E8F0",
+      "slate_100": "#F1F5F9",
+      "border_light": "rgba(15, 41, 34, 0.12)",
+      "border_dark": "rgba(255, 255, 255, 0.15)"
+    },
+    "status_colors": {
+      "pending": {
+        "bg": "#FEF3C7",
+        "text": "#92400E",
+        "border": "#F59E0B"
+      },
+      "accepted": {
+        "bg": "#D1FAE5",
+        "text": "#065F46",
+        "border": "#10B981"
+      },
+      "in_transit": {
+        "bg": "#E0F2FE",
+        "text": "#075985",
+        "border": "#0284C7"
+      },
+      "arrived": {
+        "bg": "#EDE9FE",
+        "text": "#5B21B6",
+        "border": "#8B5CF6"
+      },
+      "completed": {
+        "bg": "#DCFCE7",
+        "text": "#166534",
+        "border": "#22C55E"
+      },
+      "rejected": {
+        "bg": "#FEE2E2",
+        "text": "#991B1B",
+        "border": "#EF4444"
+      }
+    },
+    "forbidden_colors": [
+      "#7351B7",
+      "#1B93A4",
+      "#000000"
+    ]
+  },
+  "typography": {
+    "heading_font": "Cabinet Grotesk, Outfit, Plus Jakarta Sans, sans-serif",
+    "body_font": "IBM Plex Sans, Inter, system-ui, sans-serif",
+    "mono_font": "JetBrains Mono, monospace",
+    "hierarchy": {
+      "h1": "text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight",
+      "h2": "text-2xl sm:text-3xl font-bold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "h4": "text-lg font-medium",
+      "body_lg": "text-base leading-relaxed",
+      "body": "text-sm sm:text-base leading-normal",
+      "caption": "text-xs font-medium uppercase tracking-wider text-slate-500"
+    },
+    "forbidden_fonts": [
+      "Space Grotesk",
+      "Comic Sans MS"
+    ]
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Generous padding: p-4 to p-8 inside bordered cards, gap-6 to gap-8 in grids",
+    "grid_modes": {
+      "dashboard": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6",
+      "matching_list": "grid-cols-1 lg:grid-cols-12 gap-8",
+      "form_view": "max-w-3xl mx-auto p-6 sm:p-10"
+    },
+    "header": "Glassmorphism navigation bar (backdrop-blur-xl bg-white/85 dark:bg-emerald-950/80 border-b border-emerald-900/10 z-50 sticky top-0)",
+    "container_padding": "px-4 sm:px-8 lg:px-12 py-6"
+  },
+  "components_and_ui": {
+    "shadcn_customizations": "Customized rounded-xl or rounded-2xl radii, soft inner borders, high-contrast badges, non-transparent popovers and dropdowns",
+    "mandatory_controls": [
+      "Role Switcher / Role Auth Tabs (Patient, ASHA Worker, Hospital Admin)",
+      "Smart Matching AI Bar with Symptom & Emergency Triage Selector",
+      "Live Referral Status Tracker Stepper (Pending → Accepted → In Transit → Arrived → Completed)",
+      "Real-time Hospital Bed & ICU Availability Counters (Total vs Available)",
+      "Ambulance Dispatch & Dispatch Tracking Widget",
+      "Patient Medical Report File Upload & View Box",
+      "Distance & Rank Score Matrix for Matched Hospitals"
+    ]
+  },
+  "image_urls": {
+    "hero_and_banner": "https://images.unsplash.com/photo-1773140278162-fd7df1043f0c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwyfHxydXJhbCUyMGhlYWx0aGNhcmUlMjBkb2N0b3IlMjBob3NwaXRhbCUyMGluZGlhJTIwYW1idWxhbmNlfGVufDB8fHx8MTc8OTIzNzg5OXww&ixlib=rb-4.1.0&q=85",
+    "ambulance": "https://images.unsplash.com/photo-1773140278162-fd7df1043f0c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwyfHxydXJhbCUyMGhlYWx0aGNhcmUlMjBkb2N0b3IlMjBob3NwaXRhbCUyMGluZGlhJTIwYW1idWxhbmNlfGVufDB8fHx8MTc4OTIzNzg5OXww&ixlib=rb-4.1.0&q=85",
+    "doctor_patient": "https://images.unsplash.com/photo-1581056771107-24ca5f033842?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBjYXJpbmclMjBwYXRpZW50JTIwaG9zcGl0YWwlMjBlbWVyZ2VuY3l8ZW58MHx8fHwxNzg5MjM3OTA3fDA&ixlib=rb-4.1.0&q=85",
+    "rural_hospital_room": "https://images.unsplash.com/photo-1648964388258-e71b58683ed0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxydXJhbCUyMGhlYWx0aGNhcmUlMjBkb2N0b3IlMjBob3NwaXRhbCUyMGluZGlhJTIwYW1idWxhbmNlfGVufDB8fHx8MTc4OTIzNzg5OXww&ixlib=rb-4.1.0&q=85",
+    "operating_room": "https://images.unsplash.com/photo-1579154491915-611e891d3a5b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwzfHxkb2N0b3IlMjBjYXJpbmclMjBwYXRpZW50JTIwaG9zcGl0YWwlMjBlbWVyZ2VuY3l8ZW58MHx8fHwxNzg5MjM3OTA3fDA&ixlib=rb-4.1.0&q=85"
+  },
+  "testing_requirements": {
+    "data_testid_policy": "Mandatory data-testid on all key interactive elements and state displays",
+    "key_test_ids": [
+      "auth-role-select",
+      "login-submit-button",
+      "create-patient-form",
+      "patient-name-input",
+      "patient-symptoms-input",
+      "ai-match-button",
+      "hospital-rank-card",
+      "create-referral-button",
+      "referral-status-badge",
+      "hospital-accept-button",
+      "hospital-reject-button",
+      "request-ambulance-button",
+      "ambulance-status-widget",
+      "hospital-bed-count-input",
+      "hospital-icu-count-input",
+      "update-availability-button"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Do not build a generic landing page only. The application must feature fully interactive, multi-role views for Patients, ASHA Workers, and Hospital Admins.",
+    "Implement the FastAPI backend endpoints seamlessly or connect frontend state with robust mock fallback if backend services are offline.",
+    "Ensure the Smart AI Hospital Matching algorithm ranks by: Specialty Match + Bed Availability + Distance (KM).",
+    "Referral state machine MUST strictly follow: Pending -> Accepted -> In Transit -> Arrived -> Completed (with optional Rejected branch).",
+    "Use Toast notifications via Sonner on every state transition (Referral accepted, Ambulance dispatched, Bed count updated).",
+    "Every dropdown, popover, modal, and header MUST have solid high-contrast backgrounds (no pure transparent drop-downs).",
+    "All components use JS/JSX syntax as configured in the frontend repository."
+  ]
+}
