@@ -35,6 +35,10 @@ Rural patients often reach the wrong hospital first, wasting golden-hour minutes
 - **Patient history** — every patient page lists all past referrals with status
 - **Rural-friendly UI** — 17px base, larger icons/buttons/inputs, high-contrast SOS action, mobile verified at 390px
 
+### 2026-06 (landing rework)
+- Hero action buttons replaced by three tappable role cards — **ASHA Worker → `/login?role=asha`**, **Patient / Family → `/login?role=patient`**, **Hospital → `/login?role=hospital`** (ambulance card removed); login page shows "Logging in as <role>". SOS / Login / Get started live only in the top bar now.
+- Added `/app/scripts/init_postgres.sh` + `postgres-bootstrap` supervisor program so the `sanjeevani` role/database is recreated automatically if the PG data dir resets (fixed a 502 caused by this).
+
 ## Testing
 `/app/test_reports/iteration_1.json` — 18/18 backend pytest cases pass; all frontend flows above verified.
 

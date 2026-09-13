@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
@@ -16,6 +16,9 @@ export default function Login() {
   const { login } = useAuth();
   const { t } = useT();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const role = params.get("role");
+  const roleLabel = role ? t(`register.${role}`) : "";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +42,13 @@ export default function Login() {
       <Nav />
       <div className="max-w-md mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <h1 className="font-display font-extrabold text-4xl sm:text-5xl text-[color:var(--forest)]">{t("login.title")}</h1>
-        <p className="text-base md:text-lg text-slate-700 mt-2">{t("login.sub")}</p>
+        {roleLabel ? (
+          <p className="text-base md:text-lg text-slate-700 mt-2" data-testid="login-role-hint">
+            {t("login.asRole")} <span className="font-bold text-[color:var(--sage)]">{roleLabel}</span>
+          </p>
+        ) : (
+          <p className="text-base md:text-lg text-slate-700 mt-2">{t("login.sub")}</p>
+        )}
         <form onSubmit={handleSubmit} className="mt-8 card-tactical p-6 space-y-5" data-testid="login-form">
           <div>
             <Label className="text-base">{t("login.email")}</Label>

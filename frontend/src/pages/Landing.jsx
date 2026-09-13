@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Ambulance, Stethoscope, Users, Sparkles, Siren } from "lucide-react";
+import { Users, Stethoscope, Building2, Sparkles, ArrowRight } from "lucide-react";
 import Nav from "../components/Nav";
 import { useT } from "../lib/i18n";
 
 export default function Landing() {
   const { t } = useT();
-  const features = [
-    { icon: Users, title: t("landing.f1t"), body: t("landing.f1b") },
-    { icon: Stethoscope, title: t("landing.f2t"), body: t("landing.f2b") },
-    { icon: Ambulance, title: t("landing.f3t"), body: t("landing.f3b") },
+  const roles = [
+    { key: "asha", icon: Users, title: t("landing.cardAsha"), body: t("landing.cardAshaBody") },
+    { key: "patient", icon: Stethoscope, title: t("landing.cardPatient"), body: t("landing.cardPatientBody") },
+    { key: "hospital", icon: Building2, title: t("landing.cardHospital"), body: t("landing.cardHospitalBody") },
   ];
   return (
     <div className="min-h-screen grain-bg">
       <Nav />
       <section className="relative overflow-hidden hero-noise">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-14 lg:py-24 grid lg:grid-cols-12 gap-10 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-12 lg:py-20 grid lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7">
             <span className="inline-flex items-center gap-2 pill bg-white border border-emerald-900/10 text-sm uppercase tracking-widest text-[color:var(--sage)] font-bold">
               <Sparkles size={16} /> {t("landing.badge")}
@@ -26,20 +25,31 @@ export default function Landing() {
               {t("landing.title3")}
             </h1>
             <p className="mt-6 text-base md:text-lg text-slate-700 max-w-2xl leading-relaxed">{t("landing.sub")}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/sos" data-testid="hero-cta-sos">
-                <Button size="lg" className="h-14 text-lg px-7 font-bold bg-[color:var(--terracotta)] hover:bg-[color:var(--terracotta)]/90">
-                  <Siren size={22} className="mr-2" /> {t("landing.ctaSos")}
-                </Button>
-              </Link>
-              <Link to="/register" data-testid="hero-cta-register">
-                <Button size="lg" className="h-14 text-lg px-7 bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]">{t("landing.ctaRegister")}</Button>
-              </Link>
-              <Link to="/login" data-testid="hero-cta-login">
-                <Button size="lg" variant="outline" className="h-14 text-lg px-7 border-2">{t("landing.ctaLogin")}</Button>
-              </Link>
+
+            <div className="mt-8">
+              <div className="text-sm uppercase tracking-widest text-slate-500 font-bold">{t("landing.chooseRole")}</div>
+              <div className="mt-4 grid sm:grid-cols-3 gap-4" data-testid="role-cards">
+                {roles.map((r) => (
+                  <Link
+                    key={r.key}
+                    to={`/login?role=${r.key}`}
+                    className="card-tactical p-5 group hover:border-[color:var(--sage)] hover:-translate-y-1 transition-transform transition-colors duration-200"
+                    data-testid={`role-card-${r.key}`}
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[color:var(--sage)] grid place-items-center group-hover:bg-[color:var(--sage)] group-hover:text-white transition-colors">
+                      <r.icon size={28} />
+                    </div>
+                    <h3 className="mt-4 font-display font-bold text-xl text-[color:var(--forest)]">{r.title}</h3>
+                    <p className="mt-2 text-base text-slate-700 leading-relaxed">{r.body}</p>
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-base font-bold text-[color:var(--sage)]">
+                      {t("landing.tapToLogin")} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
+
           <div className="lg:col-span-5">
             <div className="relative">
               <img
@@ -55,16 +65,6 @@ export default function Landing() {
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pb-24 pt-10 grid md:grid-cols-3 gap-6">
-        {features.map((f) => (
-          <div key={f.title} className="card-tactical p-6">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[color:var(--sage)] grid place-items-center"><f.icon size={28} /></div>
-            <h3 className="mt-4 font-display font-bold text-xl text-[color:var(--forest)]">{f.title}</h3>
-            <p className="mt-2 text-base text-slate-700 leading-relaxed">{f.body}</p>
-          </div>
-        ))}
       </section>
     </div>
   );
