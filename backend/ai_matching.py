@@ -1,9 +1,7 @@
 """AI + rule-based symptom → specialty matcher, hospital ranking."""
-import os
 import math
 import logging
-import re
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+
 
 logger = logging.getLogger(__name__)
 
@@ -75,37 +73,22 @@ def rule_based_specialty(symptoms: str, injury: str = "") -> tuple[str, str]:
     return "general", ""
 
 
-async def llm_specialty_match(symptoms: str, injury: str, severity: str) -> tuple[str, str]:
-    """Fallback to Claude Sonnet when rules fail. Returns (specialty, reasoning)."""
-    api_key = os.environ.get("EMERGENT_LLM_KEY")
-    if not api_key:
-        return "general", "No LLM key configured"
+async def llm_specialty_match(
+    symptoms: str,
+    injury: str,
+    severity: str
+) -> tuple[str, str]:
+    """
+    Fallback specialty matcher.
+    Uses the existing rule-based system so the backend
+    does not depend on an external LLM service.
+    """
+    specialty, keyword = rule_based_specialty(symptoms, injury)
 
-    system = (
-        "You are a rural medical triage assistant. Given a patient's symptoms, "
-        "classify the single most appropriate medical specialty from this list: "
-        + ", ".join(SPECIALTIES)
-        + ". Reply with STRICT JSON: {\"specialty\": \"<one>\", \"reason\": \"<1 sentence>\"}. No markdown."
-    )
-    prompt = f"Symptoms: {symptoms}\nInjury: {injury}\nSeverity: {severity}"
-    try:
-        chat = LlmChat(api_key=api_key, session_id=f"triage-{hash(prompt)}", system_message=system).with_model(
-            "anthropic", "claude-sonnet-4-6"
-        )
-        resp = await chat.send_message(UserMessage(text=prompt))
-        text = resp if isinstance(resp, str) else str(resp)
-        m = re.search(r"\{.*\}", text, re.DOTALL)
-        if not m:
-            return "general", "LLM returned no JSON"
-        import json
-        data = json.loads(m.group(0))
-        specialty = str(data.get("specialty", "general")).lower().strip()
-        if specialty not in SPECIALTIES:
-            specialty = "general"
-        return specialty, str(data.get("reason", ""))
-    except Exception as e:
-        logger.warning(f"LLM triage failed: {e}")
-        return "general", f"LLM error: {e}"
+    if specialty != "general":
+        return specialty, f"Matched symptom: {keyword}"
+
+    return "general", "No specific specialty matched"
 
 
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
