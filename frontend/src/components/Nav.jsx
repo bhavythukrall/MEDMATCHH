@@ -19,7 +19,7 @@ export default function Nav() {
             <HeartPulse size={24} />
           </span>
           <span className="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-[color:var(--forest)]">
-            Sanjeevani<span className="text-[color:var(--terracotta)]">.</span>Care
+            MedMatch
           </span>
         </Link>
 
@@ -49,6 +49,10 @@ export default function Nav() {
               <Link to="/me" className={linkCls} data-testid="nav-family-link">{t("nav.family")}</Link>
               <Link to="/asha/referrals" className={linkCls} data-testid="nav-my-referrals-link">{t("nav.myReferrals")}</Link>
             </>
+          )}
+
+          {(user?.role === "patient" || user?.role === "asha" || user?.role === "admin") && (
+            <Link to="/hospitals" className={linkCls} data-testid="nav-hospital-search-link">{t("nav.findHospitals")}</Link>
           )}
 
           <Button

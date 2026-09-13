@@ -25,6 +25,7 @@ export default function Landing() {
               {t("landing.title3")}
             </h1>
             <p className="mt-6 text-base md:text-lg text-slate-700 max-w-2xl leading-relaxed">{t("landing.sub")}</p>
+            <p className="mt-3 font-display font-bold text-lg text-[color:var(--terracotta)]" data-testid="brand-tagline">{t("brand.tagline")}</p>
 
             <div className="mt-8">
               <div className="text-sm uppercase tracking-widest text-slate-500 font-bold">{t("landing.chooseRole")}</div>

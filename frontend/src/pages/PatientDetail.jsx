@@ -102,7 +102,7 @@ export default function PatientDetail() {
             <div className="flex flex-col gap-3">
               {canRefer && (
                 <Button onClick={runMatch} size="lg" disabled={matching} className="h-14 text-lg bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]" data-testid="ai-match-button">
-                  <Sparkles size={22} className="mr-2" /> {matching ? t("detail.matching") : t("detail.runMatch")}
+                  <Sparkles size={22} className="mr-2" /> {matching ? t("detail.understanding") : t("detail.runMatch")}
                 </Button>
               )}
               <label className="cursor-pointer inline-flex items-center gap-2 text-lg font-semibold text-slate-700 hover:text-[color:var(--sage)]" data-testid="upload-report-label">
@@ -158,10 +158,9 @@ export default function PatientDetail() {
         {matches && (
           <div className="card-tactical p-5 sm:p-6" data-testid="match-results">
             <div>
-              <div className="font-display font-bold text-2xl text-[color:var(--forest)]">{t("detail.ranked")}</div>
+              <div className="font-display font-bold text-2xl text-[color:var(--forest)]">{t("care.bestHospitals")}</div>
               <div className="text-base text-slate-600 mt-1">
                 {t("detail.specialty")}: <span className="text-[color:var(--sage)] font-bold">{specialty(matches.required_specialty)}</span>
-                {matches.llm_used && <span className="ml-2 pill bg-amber-100 text-amber-900 text-sm font-bold uppercase tracking-wider">{t("detail.aiAssisted")}</span>}
               </div>
             </div>
             <div className="mt-5 grid gap-3">

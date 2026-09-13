@@ -14,6 +14,7 @@ import ReferralList from "./pages/ReferralList";
 import ReferralDetail from "./pages/ReferralDetail";
 import HospitalDashboard from "./pages/HospitalDashboard";
 import HospitalDoctors from "./pages/HospitalDoctors";
+import HospitalSearch from "./pages/HospitalSearch";
 import FamilyHome from "./pages/FamilyHome";
 import FamilyForm from "./pages/FamilyForm";
 import FamilyProfile from "./pages/FamilyProfile";
@@ -41,6 +42,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/sos" element={<Sos />} />
+            <Route path="/hospitals" element={<Protected roles={CARE_ROLES}><HospitalSearch /></Protected>} />
             <Route path="/me" element={<Protected roles={SELF_ROLES}><FamilyHome /></Protected>} />
             <Route path="/me/add" element={<Protected roles={SELF_ROLES}><FamilyForm /></Protected>} />
             <Route path="/me/:id" element={<Protected roles={SELF_ROLES}><FamilyProfile /></Protected>} />

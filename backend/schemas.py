@@ -182,6 +182,8 @@ class SosMatch(BaseModel):
 
 class SosResponse(BaseModel):
     required_specialty: str
+    urgency: str = "routine"
+    facilities: list[str] = []
     llm_used: bool
     reasoning: str
     matched_keyword: str = ""

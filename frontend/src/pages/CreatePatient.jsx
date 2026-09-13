@@ -9,6 +9,7 @@ import { api, formatApiErrorDetail } from "../lib/api";
 import { useT } from "../lib/i18n";
 import { toast } from "sonner";
 import Nav from "../components/Nav";
+import VoiceInputButton from "../components/VoiceInputButton";
 
 const empty = {
   name: "", age: 25, gender: "male", phone: "",
@@ -64,7 +65,14 @@ export default function CreatePatient() {
           <div><Label className="text-base">{t("create.state")}</Label><Input className={field} value={form.state} onChange={(e) => set("state", e.target.value)} data-testid="patient-state-input" /></div>
           <div><Label className="text-base">{t("create.lat")}</Label><Input className={field} type="number" step="any" value={form.latitude} onChange={(e) => set("latitude", e.target.value)} data-testid="patient-lat-input" /></div>
           <div><Label className="text-base">{t("create.lon")}</Label><Input className={field} type="number" step="any" value={form.longitude} onChange={(e) => set("longitude", e.target.value)} data-testid="patient-lon-input" /></div>
-          <div className="md:col-span-2"><Label className="text-base">{t("create.symptoms")}</Label><Textarea rows={3} className="text-lg mt-1" value={form.symptoms} onChange={(e) => set("symptoms", e.target.value)} placeholder={t("create.symptomsPlaceholder")} data-testid="patient-symptoms-input" /></div>
+          <div className="md:col-span-2">
+            <Label className="text-base">{t("create.symptoms")}</Label>
+            <Textarea rows={3} className="text-lg mt-1" value={form.symptoms} onChange={(e) => set("symptoms", e.target.value)} placeholder={t("create.symptomsPlaceholder")} data-testid="patient-symptoms-input" />
+            <div className="mt-3 flex items-center gap-3">
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-400">{t("family.or")}</span>
+              <VoiceInputButton onText={(text) => set("symptoms", form.symptoms ? `${form.symptoms} ${text}` : text)} testId="asha-voice-button" />
+            </div>
+          </div>
           <div className="md:col-span-2"><Label className="text-base">{t("create.injury")}</Label><Textarea rows={2} className="text-lg mt-1" value={form.injury_details} onChange={(e) => set("injury_details", e.target.value)} data-testid="patient-injury-input" /></div>
           <div>
             <Label className="text-base">{t("create.severity")}</Label>

@@ -5,7 +5,9 @@ import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { toast } from "sonner";
 import Nav from "../components/Nav";
-import { Siren, MapPin, Stethoscope, BedDouble, Activity, Phone, Building2, UserRound } from "lucide-react";
+import CareNeedCard from "../components/CareNeedCard";
+import VoiceInputButton from "../components/VoiceInputButton";
+import { Siren, MapPin, BedDouble, Activity, Phone, Building2, UserRound } from "lucide-react";
 
 const CHIPS = [
   { en: "Chest pain", hi: "सीने में दर्द", value: "सीने में दर्द chest pain" },
@@ -91,9 +93,13 @@ export default function Sos() {
               ))}
             </div>
           </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-bold uppercase tracking-widest text-slate-400">{t("family.or")}</span>
+            <VoiceInputButton onText={(text) => setProblem((prev) => (prev ? `${prev} ${text}` : text))} testId="sos-voice-button" />
+          </div>
           <div className="flex flex-wrap gap-3 pt-1">
             <Button size="lg" onClick={() => triage()} disabled={loading} className="text-lg h-14 px-7 bg-[color:var(--terracotta)] hover:bg-[color:var(--terracotta)]/90 font-bold" data-testid="sos-submit-button">
-              <Siren size={22} className="mr-2" /> {loading ? t("sos.finding") : t("sos.find")}
+              <Siren size={22} className="mr-2" /> {loading ? t("sos.understanding") : t("sos.find")}
             </Button>
             <Button size="lg" variant="outline" onClick={useLocation} disabled={locating} className="text-lg h-14 px-6 border-2" data-testid="sos-location-button">
               <MapPin size={22} className="mr-2" /> {locating ? t("sos.locating") : t("sos.useLocation")}
@@ -105,20 +111,8 @@ export default function Sos() {
 
         {result && (
           <div className="space-y-4" data-testid="sos-results">
-            <div className="card-tactical p-5 flex items-center gap-4 flex-wrap">
-              <span className="grid place-items-center w-14 h-14 rounded-2xl bg-emerald-100 text-[color:var(--sage)]"><Stethoscope size={28} /></span>
-              <div>
-                <div className="text-sm uppercase tracking-widest text-slate-500 font-semibold">{t("sos.specialistNeeded")}</div>
-                <div className="font-display font-extrabold text-3xl text-[color:var(--forest)]" data-testid="sos-specialty">
-                  {specialty(result.required_specialty)}
-                </div>
-              </div>
-              {result.llm_used && (
-                <span className="pill bg-amber-100 text-amber-900 text-sm font-bold uppercase tracking-wider" data-testid="sos-ai-badge">{t("sos.aiAssisted")}</span>
-              )}
-            </div>
-
-            <h2 className="font-display font-bold text-lg md:text-lg text-[color:var(--forest)]">{t("sos.results")}</h2>
+            <CareNeedCard result={result} />
+            <h2 className="font-display font-bold text-lg md:text-lg text-[color:var(--forest)]">{t("care.bestHospitals")}</h2>
 
             {result.matches.map((m, idx) => (
               <div key={m.hospital.id} className="card-tactical p-5" data-testid={`sos-hospital-card-${idx}`}>

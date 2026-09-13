@@ -173,3 +173,39 @@ def rank_hospitals(hospitals: list, required_specialty: str, patient_lat: float,
 
     results.sort(key=lambda x: x["match_score"], reverse=True)
     return results
+
+
+# ---- Care requirement (facilities + urgency) shown to users, no AI wording ----
+FACILITY_MAP: dict[str, list[str]] = {
+    "cardiology": ["emergency_care", "ecg", "cath_lab"],
+    "obstetrics": ["labour_room", "ultrasound", "blood_bank"],
+    "neurology": ["ct_scan", "emergency_care", "icu"],
+    "trauma": ["emergency_care", "ct_scan", "blood_bank", "operation_theatre"],
+    "burns": ["burns_unit", "emergency_care"],
+    "poisoning": ["emergency_care", "icu"],
+    "pulmonology": ["oxygen", "xray", "nebulisation"],
+    "orthopedics": ["xray", "operation_theatre", "plaster_room"],
+    "pediatrics": ["pediatric_ward", "nicu"],
+    "dermatology": ["skin_clinic", "opd"],
+    "gastroenterology": ["ultrasound", "endoscopy"],
+    "general_surgery": ["operation_theatre", "anaesthesia"],
+    "ent": ["opd", "endoscopy"],
+    "ophthalmology": ["eye_opd", "operation_theatre"],
+    "psychiatry": ["counselling", "opd"],
+    "nephrology": ["dialysis", "lab"],
+    "urology": ["ultrasound", "operation_theatre"],
+    "internal_medicine": ["opd", "lab"],
+}
+
+URGENT_SPECIALTIES = {"cardiology", "trauma", "poisoning", "burns", "neurology", "obstetrics"}
+
+
+def care_requirement(specialty: str, severity: str) -> tuple[str, list[str]]:
+    """Returns (urgency, facilities) for the care-need panel."""
+    if severity == "critical" or specialty in URGENT_SPECIALTIES:
+        urgency = "urgent"
+    elif severity == "moderate":
+        urgency = "soon"
+    else:
+        urgency = "routine"
+    return urgency, FACILITY_MAP.get(specialty, ["opd", "lab"])

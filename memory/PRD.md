@@ -1,4 +1,4 @@
-# Sanjeevani Care — Product Requirements Doc
+# MedMatch — Product Requirements Doc
 
 ## Problem
 Rural patients often reach the wrong hospital first, wasting golden-hour minutes. ASHA workers, patients and hospital doctors need a fast way to capture the problem (in Hindi or English), find the right specialist, check who is actually on duty with free beds, and coordinate an ambulance/transfer.
@@ -38,6 +38,13 @@ Rural patients often reach the wrong hospital first, wasting golden-hour minutes
 ### 2026-06 (landing rework)
 - Hero action buttons replaced by three tappable role cards — **ASHA Worker → `/login?role=asha`**, **Patient / Family → `/login?role=patient`**, **Hospital → `/login?role=hospital`** (ambulance card removed); login page shows "Logging in as <role>". SOS / Login / Get started live only in the top bar now.
 - Added `/app/scripts/init_postgres.sh` + `postgres-bootstrap` supervisor program so the `sanjeevani` role/database is recreated automatically if the PG data dir resets (fixed a 502 caused by this).
+
+### 2026-06 (branding + plain-language UI)
+- Renamed the product to **MedMatch** across logo, nav, all screens, page title and API (`GET /api/` → `{"service":"MedMatch"}`); tagline "Right Patient. Right Hospital. Right Information. Right Time." on the landing page. Demo accounts migrated to `@medmatch.in`.
+- **Removed every mention of "AI" from the UI.** Loading now reads "Understanding your problem…", results show a **Your Care Need** card (Urgency · Care needed · Facilities needed, e.g. Urgent + Cardiologist + Emergency Care/ECG/Cath Lab) followed by **Best Matching Hospitals**. Backend gained `care_requirement()` returning urgency + facilities per specialty.
+- Voice input everywhere a problem is described: patient SOS, family intake and the ASHA symptom field (shared `VoiceInputButton`, hi-IN / en-IN).
+- New **hospital search** page `/hospitals` for planned visits (name / speciality / location) available to patients and ASHA workers.
+- Hospital recommendations only render after a problem is submitted.
 
 ## Testing
 `/app/test_reports/iteration_1.json` — 18/18 backend cases pass (SOS triage, doctors, hospital editing, transfers).

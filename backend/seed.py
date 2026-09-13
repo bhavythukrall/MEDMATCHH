@@ -57,7 +57,7 @@ SAMPLE_AMBULANCES = [
 async def _write_creds_file(admin_email: str, admin_password: str, asha_email: str, asha_password: str, hosp_email: str, hosp_password: str):
     os.makedirs("/app/memory", exist_ok=True)
     with open("/app/memory/test_credentials.md", "w") as f:
-        f.write(f"""# Sanjeevani Care - Test Credentials
+        f.write(f"""# MedMatch - Test Credentials
 
 ## Admin
 - Email: `{admin_email}`
@@ -75,7 +75,7 @@ async def _write_creds_file(admin_email: str, admin_password: str, asha_email: s
 - Role: hospital
 
 ## Patient / Family (demo)
-- Email: `patient@sanjeevani.in`
+- Email: `patient@medmatch.in`
 - Password: `Patient@2026`
 - Role: patient
 - Has one seeded patient record (Ramesh Kumar, chest pain, critical)
@@ -103,7 +103,7 @@ async def seed_data():
         res = await db.execute(select(User).where(User.email == admin_email))
         admin = res.scalar_one_or_none()
         if not admin:
-            admin = User(email=admin_email, password_hash=hash_password(admin_password), name="Sanjeevani Admin", role="admin")
+            admin = User(email=admin_email, password_hash=hash_password(admin_password), name="MedMatch Admin", role="admin")
             db.add(admin)
         elif not verify_password(admin_password, admin.password_hash):
             admin.password_hash = hash_password(admin_password)
@@ -123,21 +123,21 @@ async def seed_data():
             first_hospital_id = existing_hospitals[0].id
 
         # ---- Demo ASHA worker ----
-        asha_email = "asha@sanjeevani.in"
+        asha_email = "asha@medmatch.in"
         asha_password = "Asha@2026"
         res = await db.execute(select(User).where(User.email == asha_email))
         if not res.scalar_one_or_none():
             db.add(User(email=asha_email, password_hash=hash_password(asha_password), name="Sunita Devi (ASHA)", phone="+91-9876543210", role="asha"))
 
         # ---- Demo Hospital admin ----
-        hosp_email = "hospital@sanjeevani.in"
+        hosp_email = "hospital@medmatch.in"
         hosp_password = "Hosp@2026"
         res = await db.execute(select(User).where(User.email == hosp_email))
         if not res.scalar_one_or_none():
             db.add(User(email=hosp_email, password_hash=hash_password(hosp_password), name="Dr. R. Sharma", phone="+91-141-2560291", role="hospital", hospital_id=first_hospital_id))
 
         # ---- Demo Patient / family account ----
-        patient_email = "patient@sanjeevani.in"
+        patient_email = "patient@medmatch.in"
         patient_password = "Patient@2026"
         res = await db.execute(select(User).where(User.email == patient_email))
         patient_user = res.scalar_one_or_none()

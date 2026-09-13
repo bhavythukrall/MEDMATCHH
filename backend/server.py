@@ -1,4 +1,4 @@
-"""Main FastAPI application: Sanjeevani Care rural healthcare platform."""
+"""Main FastAPI application: MedMatch rural healthcare platform."""
 from dotenv import load_dotenv
 from pathlib import Path
 load_dotenv(Path(__file__).parent / ".env")
@@ -50,14 +50,14 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
-app = FastAPI(title="Sanjeevani Care API", lifespan=lifespan)
+app = FastAPI(title="MedMatch API", lifespan=lifespan)
 
 api_router = APIRouter(prefix="/api")
 
 
 @api_router.get("/")
 async def root():
-    return {"service": "Sanjeevani Care", "status": "ok"}
+    return {"service": "MedMatch", "status": "ok"}
 
 
 api_router.include_router(auth_routes.router)

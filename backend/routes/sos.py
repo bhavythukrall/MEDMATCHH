@@ -6,7 +6,7 @@ from sqlalchemy import select
 from database import get_db
 from models import Hospital, Doctor
 from schemas import SosIn, SosResponse, SosMatch, HospitalOut, DoctorOut
-from ai_matching import rule_based_specialty, llm_specialty_match, rank_hospitals
+from ai_matching import rule_based_specialty, llm_specialty_match, rank_hospitals, care_requirement
 
 router = APIRouter(prefix="/sos", tags=["sos"])
 
@@ -55,7 +55,9 @@ async def sos_triage(body: SosIn, db: AsyncSession = Depends(get_db)):
             on_duty_count=len(on_duty),
         ))
 
+    urgency, facilities = care_requirement(specialty, body.severity)
     return SosResponse(
-        required_specialty=specialty, llm_used=llm_used, reasoning=reasoning,
+        required_specialty=specialty, urgency=urgency, facilities=facilities,
+        llm_used=llm_used, reasoning=reasoning,
         matched_keyword=matched_kw, matches=matches,
     )

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, formatApiErrorDetail } from "../lib/api";
 import { useT } from "../lib/i18n";
@@ -6,43 +6,20 @@ import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { toast } from "sonner";
 import Nav from "../components/Nav";
-import { Mic, MicOff, Search, Siren, MapPin, BedDouble, Activity, Phone, Building2, UserRound, Stethoscope, Clock } from "lucide-react";
+import CareNeedCard from "../components/CareNeedCard";
+import VoiceInputButton from "../components/VoiceInputButton";
+import { Search, Siren, MapPin, BedDouble, Activity, Phone, Building2, UserRound, Clock } from "lucide-react";
 
 export default function ProblemIntake() {
   const { id } = useParams();
   const { t, specialty, lang } = useT();
   const [person, setPerson] = useState(null);
   const [problem, setProblem] = useState("");
-  const [listening, setListening] = useState(false);
   const [loading, setLoading] = useState(false);
   const [emergency, setEmergency] = useState(false);
   const [result, setResult] = useState(null);
-  const recognitionRef = useRef(null);
 
   useEffect(() => { api.get(`/patients/${id}`).then((r) => setPerson(r.data)); }, [id]);
-
-  const toggleVoice = () => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return toast.error(t("family.voiceUnsupported"));
-    if (listening) {
-      recognitionRef.current?.stop();
-      setListening(false);
-      return;
-    }
-    const rec = new SR();
-    rec.lang = lang === "hi" ? "hi-IN" : "en-IN";
-    rec.interimResults = false;
-    rec.continuous = false;
-    rec.onresult = (e) => {
-      const text = Array.from(e.results).map((r) => r[0].transcript).join(" ");
-      setProblem((prev) => (prev ? `${prev} ${text}` : text));
-    };
-    rec.onerror = () => { setListening(false); toast.error(t("family.voiceUnsupported")); };
-    rec.onend = () => setListening(false);
-    recognitionRef.current = rec;
-    rec.start();
-    setListening(true);
-  };
 
   const search = async (isEmergency) => {
     const q = problem.trim();
@@ -95,21 +72,11 @@ export default function ProblemIntake() {
           />
           <div className="flex items-center gap-3">
             <span className="text-sm font-bold uppercase tracking-widest text-slate-400">{t("family.or")}</span>
-            <Button
-              type="button"
-              size="lg"
-              variant="outline"
-              onClick={toggleVoice}
-              className={`h-14 text-lg border-2 ${listening ? "border-[color:var(--terracotta)] text-[color:var(--terracotta)] sos-pulse" : ""}`}
-              data-testid="voice-input-button"
-            >
-              {listening ? <MicOff size={22} className="mr-2" /> : <Mic size={22} className="mr-2" />}
-              {listening ? t("family.listening") : t("family.speak")}
-            </Button>
+            <VoiceInputButton onText={(text) => setProblem((prev) => (prev ? `${prev} ${text}` : text))} />
           </div>
           <div className="flex flex-wrap gap-3 pt-1">
             <Button size="lg" onClick={() => search(false)} disabled={loading} className="h-14 text-lg px-7 bg-[color:var(--sage)] hover:bg-[color:var(--sage-hover)]" data-testid="find-hospital-button">
-              <Search size={22} className="mr-2" /> {loading && !emergency ? t("sos.finding") : t("family.findHospital")}
+              <Search size={22} className="mr-2" /> {loading && !emergency ? t("sos.understanding") : t("family.findHospital")}
             </Button>
             <Button size="lg" onClick={() => search(true)} disabled={loading} className="h-14 text-lg px-7 bg-[color:var(--terracotta)] hover:bg-[color:var(--terracotta)]/90 font-bold" data-testid="emergency-help-button">
               <Siren size={22} className="mr-2" /> {t("family.emergency")}
@@ -130,14 +97,11 @@ export default function ProblemIntake() {
               </div>
             )}
 
-            <div className="card-tactical p-5 flex items-center gap-4 flex-wrap">
-              <span className="grid place-items-center w-14 h-14 rounded-2xl bg-emerald-100 text-[color:var(--sage)]"><Stethoscope size={28} /></span>
-              <div>
-                <div className="text-sm uppercase tracking-widest text-slate-500 font-semibold">{t("sos.specialistNeeded")}</div>
-                <div className="font-display font-extrabold text-3xl text-[color:var(--forest)]" data-testid="intake-specialty">{specialty(result.required_specialty)}</div>
-              </div>
-              {result.llm_used && <span className="pill bg-amber-100 text-amber-900 text-sm font-bold uppercase tracking-wider" data-testid="intake-ai-badge">{t("sos.aiAssisted")}</span>}
-            </div>
+            <CareNeedCard result={result} title={person?.relationship === "self" ? t("care.title") : `${t("care.titleOther")} — ${label}`} />
+
+            {result.matches.length > 0 && (
+              <h2 className="font-display font-bold text-lg md:text-lg text-[color:var(--forest)]" data-testid="intake-results-heading">{t("care.bestHospitals")}</h2>
+            )}
 
             {result.matches.map((m, idx) => (
               <div key={m.hospital.id} className="card-tactical p-5" data-testid={`intake-hospital-card-${idx}`}>
