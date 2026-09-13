@@ -46,7 +46,7 @@ export default function Nav() {
           )}
           {user && user.role === "patient" && (
             <>
-              <Link to="/asha/patients" className={linkCls} data-testid="nav-patient-records-link">{t("nav.patients")}</Link>
+              <Link to="/me" className={linkCls} data-testid="nav-family-link">{t("nav.family")}</Link>
               <Link to="/asha/referrals" className={linkCls} data-testid="nav-my-referrals-link">{t("nav.myReferrals")}</Link>
             </>
           )}

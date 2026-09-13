@@ -14,6 +14,10 @@ import ReferralList from "./pages/ReferralList";
 import ReferralDetail from "./pages/ReferralDetail";
 import HospitalDashboard from "./pages/HospitalDashboard";
 import HospitalDoctors from "./pages/HospitalDoctors";
+import FamilyHome from "./pages/FamilyHome";
+import FamilyForm from "./pages/FamilyForm";
+import FamilyProfile from "./pages/FamilyProfile";
+import ProblemIntake from "./pages/ProblemIntake";
 
 function Protected({ roles, children }) {
   const { user } = useAuth();
@@ -24,6 +28,7 @@ function Protected({ roles, children }) {
 }
 
 const CARE_ROLES = ["asha", "admin", "patient", "hospital"];
+const SELF_ROLES = ["patient", "admin"];
 
 export default function App() {
   return (
@@ -36,8 +41,13 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/sos" element={<Sos />} />
-            <Route path="/asha/patients" element={<Protected roles={CARE_ROLES}><PatientList /></Protected>} />
-            <Route path="/asha/patients/new" element={<Protected roles={CARE_ROLES}><CreatePatient /></Protected>} />
+            <Route path="/me" element={<Protected roles={SELF_ROLES}><FamilyHome /></Protected>} />
+            <Route path="/me/add" element={<Protected roles={SELF_ROLES}><FamilyForm /></Protected>} />
+            <Route path="/me/:id" element={<Protected roles={SELF_ROLES}><FamilyProfile /></Protected>} />
+            <Route path="/me/:id/edit" element={<Protected roles={SELF_ROLES}><FamilyForm /></Protected>} />
+            <Route path="/me/:id/help" element={<Protected roles={SELF_ROLES}><ProblemIntake /></Protected>} />
+            <Route path="/asha/patients" element={<Protected roles={["asha", "admin", "hospital"]}><PatientList /></Protected>} />
+            <Route path="/asha/patients/new" element={<Protected roles={["asha", "admin", "hospital"]}><CreatePatient /></Protected>} />
             <Route path="/asha/patients/:id" element={<Protected roles={CARE_ROLES}><PatientDetail /></Protected>} />
             <Route path="/asha/referrals" element={<Protected><ReferralList /></Protected>} />
             <Route path="/asha/referrals/:id" element={<Protected><ReferralDetail /></Protected>} />

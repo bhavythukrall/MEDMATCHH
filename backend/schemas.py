@@ -90,6 +90,27 @@ class PatientIn(BaseModel):
     symptoms: str = ""
     injury_details: str = ""
     severity: str = "moderate"
+    relationship: str = ""
+    medical_history: str = ""
+    allergies: str = ""
+
+
+class PatientUpdate(BaseModel):
+    name: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    phone: Optional[str] = None
+    village: Optional[str] = None
+    district: Optional[str] = None
+    state: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    symptoms: Optional[str] = None
+    injury_details: Optional[str] = None
+    severity: Optional[str] = None
+    relationship: Optional[str] = None
+    medical_history: Optional[str] = None
+    allergies: Optional[str] = None
 
 
 class PatientOut(OrmModel):
@@ -106,6 +127,9 @@ class PatientOut(OrmModel):
     symptoms: str
     injury_details: str
     severity: str
+    relationship: str = ""
+    medical_history: str = ""
+    allergies: str = ""
     created_at: datetime
 
 

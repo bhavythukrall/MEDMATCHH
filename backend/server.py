@@ -31,6 +31,8 @@ async def lifespan(app: FastAPI):
     # Create tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        for col in ("relationship VARCHAR DEFAULT ''", "medical_history TEXT DEFAULT ''", "allergies TEXT DEFAULT ''"):
+            await conn.exec_driver_sql(f"ALTER TABLE patients ADD COLUMN IF NOT EXISTS {col}")
     logger.info("PostgreSQL tables ready")
 
     # Seed initial data (admin, sample hospitals, ambulances)

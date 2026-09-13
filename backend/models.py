@@ -99,6 +99,9 @@ class Patient(Base):
     symptoms: Mapped[str] = mapped_column(Text, default="")
     injury_details: Mapped[str] = mapped_column(Text, default="")
     severity: Mapped[str] = mapped_column(String, default="moderate")  # mild|moderate|critical
+    relationship: Mapped[str] = mapped_column(String, default="")  # self|mother|father|... (SELF accounts)
+    medical_history: Mapped[str] = mapped_column(Text, default="")
+    allergies: Mapped[str] = mapped_column(Text, default="")
     created_by_user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 

@@ -153,7 +153,7 @@ async def seed_data():
                 village="Bassi", district="Jaipur", state="Rajasthan",
                 latitude=26.8300, longitude=76.0500,
                 symptoms="chest pain since morning, sweating",
-                severity="critical", created_by_user_id=patient_user.id,
+                severity="critical", created_by_user_id=patient_user.id, relationship="self",
             ))
 
         # ---- Doctors (one roster per hospital specialty) ----

@@ -40,7 +40,17 @@ Rural patients often reach the wrong hospital first, wasting golden-hour minutes
 - Added `/app/scripts/init_postgres.sh` + `postgres-bootstrap` supervisor program so the `sanjeevani` role/database is recreated automatically if the PG data dir resets (fixed a 502 caused by this).
 
 ## Testing
-`/app/test_reports/iteration_1.json` — 18/18 backend pytest cases pass; all frontend flows above verified.
+`/app/test_reports/iteration_1.json` — 18/18 backend cases pass (SOS triage, doctors, hospital editing, transfers).
+`/app/test_reports/iteration_2.json` — SELF/family flow: 6/6 new backend cases + 20/22 frontend checks pass; confirmed no referral is ever created from the SELF flow.
+
+### 2026-06 (SELF / family-member flow — bug fix)
+- "Add Patient" on the patient side no longer behaves like referral creation. New SELF flow: **LOGIN → `/me` "Who needs help today?" → saved person cards → person profile → problem intake (text **and** voice) → AI analysis → best hospitals with doctors on duty, distance, ETA and Maps link**.
+- `+ Add Family Member` (`/me/add`) saves a person to the account: name, relationship, age, gender, optional phone — nothing clinical, no referral.
+- Family profile `/me/:id`: relationship/age/gender + optional medical history & allergies, with **Use MedMatch**, **Edit Profile**, **Remove**.
+- Problem intake `/me/:id/help`: text box + Web Speech API mic (hi-IN / en-IN), **Find Hospital** and **Emergency Help** — Emergency uses the currently selected person and offers Call 108; neither creates a referral.
+- Saved people persist across logins. `patients` table gained `relationship`, `medical_history`, `allergies` (idempotent ALTER on startup); `/api/patients` is owner-scoped for patient role with PATCH/DELETE ownership checks.
+- Referral creation remains exclusively in the ASHA and hospital workflows; `/asha/*` is now blocked for the patient role.
+
 
 ## Backlog (P1)
 - SMS/WhatsApp alerts to ASHA + patient family (Twilio)

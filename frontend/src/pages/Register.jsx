@@ -31,6 +31,7 @@ export default function Register() {
       const u = await register(payload);
       toast.success(`${t("login.welcome")}, ${u.name}`);
       if (u.role === "hospital") navigate("/hospital");
+      else if (u.role === "patient") navigate("/me");
       else navigate("/asha/patients");
     } catch (err) {
       toast.error(formatApiErrorDetail(err.response?.data?.detail) || err.message);
