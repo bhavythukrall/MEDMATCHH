@@ -68,6 +68,7 @@ export default function Login() {
         <div className="mt-6 card-tactical p-4 text-sm text-slate-700 space-y-2">
           <div className="font-bold uppercase tracking-widest text-slate-500">{t("login.demo")}</div>
           <button type="button" className="block underline font-semibold hover:text-[color:var(--sage)]" onClick={() => fill("asha@sanjeevani.in", "Asha@2026")} data-testid="fill-asha-demo">{t("login.demoAsha")} (asha@sanjeevani.in)</button>
+          <button type="button" className="block underline font-semibold hover:text-[color:var(--sage)]" onClick={() => fill("patient@sanjeevani.in", "Patient@2026")} data-testid="fill-patient-demo">{t("register.patient")} (patient@sanjeevani.in)</button>
           <button type="button" className="block underline font-semibold hover:text-[color:var(--sage)]" onClick={() => fill("hospital@sanjeevani.in", "Hosp@2026")} data-testid="fill-hospital-demo">{t("login.demoHospital")} (hospital@sanjeevani.in)</button>
         </div>
       </div>

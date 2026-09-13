@@ -3,7 +3,7 @@ import os
 import logging
 from sqlalchemy import select
 from database import AsyncSessionLocal
-from models import User, Hospital, Ambulance, Doctor
+from models import User, Hospital, Ambulance, Doctor, Patient
 from auth import hash_password, verify_password
 
 logger = logging.getLogger(__name__)
@@ -74,6 +74,12 @@ async def _write_creds_file(admin_email: str, admin_password: str, asha_email: s
 - Password: `{hosp_password}`
 - Role: hospital
 
+## Patient / Family (demo)
+- Email: `patient@sanjeevani.in`
+- Password: `Patient@2026`
+- Role: patient
+- Has one seeded patient record (Ramesh Kumar, chest pain, critical)
+
 ## API Endpoints
 - POST /api/auth/register
 - POST /api/auth/login
@@ -129,6 +135,26 @@ async def seed_data():
         res = await db.execute(select(User).where(User.email == hosp_email))
         if not res.scalar_one_or_none():
             db.add(User(email=hosp_email, password_hash=hash_password(hosp_password), name="Dr. R. Sharma", phone="+91-141-2560291", role="hospital", hospital_id=first_hospital_id))
+
+        # ---- Demo Patient / family account ----
+        patient_email = "patient@sanjeevani.in"
+        patient_password = "Patient@2026"
+        res = await db.execute(select(User).where(User.email == patient_email))
+        patient_user = res.scalar_one_or_none()
+        if not patient_user:
+            patient_user = User(email=patient_email, password_hash=hash_password(patient_password), name="Ramesh Kumar (Patient)", phone="+91-9876500111", role="patient")
+            db.add(patient_user)
+            await db.flush()
+
+        res = await db.execute(select(Patient).where(Patient.created_by_user_id == patient_user.id))
+        if not res.scalars().first():
+            db.add(Patient(
+                name="Ramesh Kumar", age=48, gender="male", phone="+91-9876500111",
+                village="Bassi", district="Jaipur", state="Rajasthan",
+                latitude=26.8300, longitude=76.0500,
+                symptoms="chest pain since morning, sweating",
+                severity="critical", created_by_user_id=patient_user.id,
+            ))
 
         # ---- Doctors (one roster per hospital specialty) ----
         res = await db.execute(select(Doctor))
