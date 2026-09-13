@@ -19,10 +19,24 @@ export default function ReferralDetail() {
   const { user } = useAuth();
   const { t, specialty } = useT();
 
-  const load = () => api.get(`/referrals/${id}`).then((r) => { setData(r.data); setPickup(r.data.patient.village || r.data.patient.district); });
-  const loadAmb = () => api.get(`/ambulances/requests/by-referral/${id}`).then((r) => setAmbRequests(r.data)).catch(() => {});
-  useEffect(() => { load(); loadAmb(); }, [id, load, loadAmb]);
+  
+  const load = useCallback(() => {
+  api.get(`/referrals/${id}`).then((r) => {
+    setData(r.data);
+    setPickup(r.data.patient.village || r.data.patient.district);
+  });
+}, [id]);
 
+const loadAmb = useCallback(() => {
+  api
+    .get(`/ambulances/requests/by-referral/${id}`)
+    .then((r) => setAmbRequests(r.data))
+    .catch(() => {});
+}, [id]);
+  useEffect(() => {
+  load();
+  loadAmb();
+}, [id, load, loadAmb]);
   const transition = async (status, rejection_reason = "") => {
     try {
       await api.patch(`/referrals/${id}/status`, { status, rejection_reason });
